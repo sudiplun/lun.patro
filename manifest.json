@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "id": "lun.patro",
+  "name": "My Parto",
+  "version": "0.1.0",
+  "author": "sudiplun",
+  "description": "Date/time label with a calendar popup",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "My Nepali Patro",
+    "description": "Date/time label with a calendar popup",
+    "category": "Time",
+    "allowMultiple": false,
+    "defaults": {
+      "showNepali": false,
+      "calendarMode": "bs"
+    },
+    "schema": [
+      {
+        "key": "showNepali",
+        "type": "boolean",
+        "label": "Show Nepali BS date in the bar",
+        "defaultValue": false
+      },
+      {
+        "key": "calendarMode",
+        "type": "string",
+        "label": "Calendar mode (bs or ad)",
+        "defaultValue": "bs"
+      }
+    ]
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.clock"
+  }
+}
