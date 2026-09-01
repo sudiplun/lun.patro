@@ -34,6 +34,13 @@ omarchy-shell shell rescanPlugins
 omarchy plugin enable lun.patro
 ```
 
+## Remove
+
+```sh
+omarchy plugin remove lun.patro
+
+```
+
 ## Configuration
 
 Set these through the widget's settings UI, or directly in `shell.json` under this widget's entry:
