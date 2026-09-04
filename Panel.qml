@@ -7,8 +7,8 @@ import "Model.js" as Model
 // Native clock popout, restyled only with Omarchy's own palette and metrics.
 Panel {
     id: root
-    moduleName: "omarchy.clock"
-    ipcTarget: "omarchy.clock"
+    moduleName: "lun.patro"
+    ipcTarget: "lun.patro"
     manageIpc: false
 
     property var anchorItem: null
