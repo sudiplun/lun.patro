@@ -29,7 +29,7 @@ You'll be asked to confirm, since plugins run as unsandboxed code inside your sh
 **Option 2 — manual install**
 
 ```bash
-git clone https://github.com/sudiplun/lun.patro.git ~/.config/omarchy/plugins/lun.patro
+git clone https://github.com/sudiplun/lun.patro.git \~/.config/omarchy/plugins/lun.patro
 omarchy-shell shell rescanPlugins
 omarchy plugin enable lun.patro
 ```
