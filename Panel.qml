@@ -37,7 +37,11 @@ Panel {
     readonly property int cellWidth: Style.space(56)
     readonly property int cellHeight: Style.space(34)
     readonly property int cellSpacing: Style.space(2)
-    readonly property int gridWidth: 7 * cellWidth + 6 * cellSpacing
+    readonly property int weekColumnWidth: Style.space(32)
+    readonly property int weekGutterWidth: Style.space(10)
+    readonly property int gridWidth: weekColumnWidth + weekGutterWidth + cellSpacing + 7 * cellWidth + 6 * cellSpacing
+    property bool _opened: false
+    property bool opened: _opened
 
     function persistSettings(values) {
         var entry = { id: root.moduleName }
@@ -105,15 +109,26 @@ Panel {
 
     function open() {
         refresh()
+        _opened = true
+        popup.open = true
         root.controller.show()
         Qt.callLater(function() {
-            if (root.opened) setCenterHoverRevealSuppressed(true)
+            if (_opened) setCenterHoverRevealSuppressed(true)
         })
     }
 
-    function close() {
+    // KeyboardPanel dismisses through its owner. Keep that path pointed at
+    // the panel controller itself so an outside click cannot get lost in the
+    // bar-widget wrapper.
+    function dismissPopup() {
         setCenterHoverRevealSuppressed(false)
         root.controller.hide()
+    }
+
+    function close() {
+        _opened = false
+        popup.open = false
+        root.dismissPopup()
     }
 
     function toggle() {
@@ -150,7 +165,7 @@ Panel {
         anchorItem: root.anchorItem
         owner: root.barIdentity
         bar: root.bar
-        open: root.opened
+        open: false   // We control open state via our _opened property and open()/close() functions
         centerOnBar: true
         focusTarget: keyCatcher
         contentWidth: popup.fittedContentWidth(Style.space(560))
@@ -164,7 +179,7 @@ Panel {
                 if (dy !== 0) root.moveMonth(dy * 12)
             }
             onActivateRequested: root.goToToday()
-            onCloseRequested: root.close()
+            onCloseRequested: root.dismissPopup()
             onTabRequested: function(direction) { root.switchPanel(direction) }
             onTextKey: function(t) {
                 if (t === "[") root.moveMonth(-1)
@@ -303,6 +318,23 @@ Panel {
                             Row {
                                 spacing: root.cellSpacing
 
+                                Text {
+                                    width: root.weekColumnWidth
+                                    height: Style.space(16)
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    text: "W"
+                                    color: Qt.darker(root.contentForeground, 1.9)
+                                    font.family: root.contentFontFamily
+                                    font.pixelSize: Style.font.caption
+                                    font.bold: true
+                                }
+
+                                Item {
+                                    width: root.weekGutterWidth
+                                    height: Style.space(16)
+                                }
+
                                 Repeater {
                                     model: root.weekdays
 
@@ -328,6 +360,22 @@ Panel {
                                 Row {
                                     required property var modelData
                                     spacing: root.cellSpacing
+
+                                    Text {
+                                        width: root.weekColumnWidth
+                                        height: root.cellHeight
+                                        horizontalAlignment: Text.AlignHCenter
+                                        verticalAlignment: Text.AlignVCenter
+                                        text: root.dayText(modelData.week)
+                                        color: Qt.darker(root.contentForeground, 1.9)
+                                        font.family: root.contentFontFamily
+                                        font.pixelSize: Style.font.caption
+                                    }
+
+                                    Item {
+                                        width: root.weekGutterWidth
+                                        height: root.cellHeight
+                                    }
 
                                     Repeater {
                                         model: modelData.days

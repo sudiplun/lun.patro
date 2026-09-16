@@ -140,15 +140,19 @@ function bsMonthGrid(year, month, todayKey) {
   var weeks = []
   for (var w = 0; w < 6; w++) {
     var days = []
+    var weekAnchor = null
     for (var d = 0; d < 7; d++) {
       if (!cursor) return weeks
       var key = bsKey(cursor.year, cursor.month, cursor.day)
+      // BS grids are Sunday-first. Use the Thursday in each displayed row
+      // as the ISO-week anchor, matching the AD calendar's week labels.
+      if (d === 4) weekAnchor = bsToAd(cursor.year, cursor.month, cursor.day)
       days.push({ key:key, year:cursor.year, month:cursor.month, day:cursor.day,
         inMonth: cursor.year === year && cursor.month === month,
         weekend: d === 0 || d === 6, today: key === String(todayKey || "") })
       cursor = bsAddDays(cursor.year, cursor.month, cursor.day, 1)
     }
-    weeks.push({ days:days })
+    weeks.push({ week: weekAnchor ? isoWeek(weekAnchor.getFullYear(), weekAnchor.getMonth(), weekAnchor.getDate()) : "", days:days })
   }
   return weeks
 }

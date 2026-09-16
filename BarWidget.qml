@@ -25,6 +25,12 @@ BarWidget {
     // format from then on rather than something that reverts on restart.
     readonly property string activeFormat: configuredFormat
 
+    // A seconds label needs the clock to tick sixty times as often, and a
+    // repaint a second is a price only the formats that print seconds pay.
+    readonly property bool showsSeconds: Model.clockNeedsSeconds(activeFormat)
+    readonly property string displayText: formatted(displayDate)
+    readonly property var verticalLines: displayText.split("\n")
+
     function refresh() {
         displayDate = new Date();
         if (panelLoader.item && panelLoader.item.refresh)
@@ -54,9 +60,6 @@ BarWidget {
     function formatted(date) {
         return Qt.formatDateTime(date, activeFormat.replace(/ww/g, Model.isoWeekLiteral(date.getFullYear(), date.getMonth(), date.getDate())));
     }
-    readonly property string nepaliText: Model.nepaliDateLabel(displayDate)
-    readonly property string displayText: setting("showNepali", false) && nepaliText !== "" ? nepaliText : formatted(displayDate)
-    readonly property var verticalLines: displayText.split("\n")
 
     // ---- Calendar popup. Shape contract for shell.summon/hide/toggle
     //      routing: Bar.findPanelWidget requires open/close/opened on the
@@ -69,8 +72,12 @@ BarWidget {
     }
 
     function close() {
-        if (panelLoader.item)
-            panelLoader.item.close();
+        if (panelLoader.item) {
+            if (panelLoader.item.dismissPopup)
+                panelLoader.item.dismissPopup();
+            else
+                panelLoader.item.close();
+        }
     }
 
     function togglePanel() {
@@ -123,7 +130,7 @@ BarWidget {
 
     SystemClock {
         id: clock
-        precision: SystemClock.Minutes
+        precision: root.showsSeconds ? SystemClock.Seconds : SystemClock.Minutes
         onDateChanged: root.displayDate = date
     }
 
@@ -177,6 +184,7 @@ BarWidget {
         fixedHeight: root.vertical ? root.verticalLines.length * Style.bar.iconSlot : -1
         horizontalMargin: 8.75
         verticalPadding: 8.75
+        tooltipText: "Right-click to toggle format"
 
         onPressed: function (b) {
             if (b === Qt.RightButton)
@@ -205,6 +213,24 @@ BarWidget {
                     color: button.foreground
                 }
             }
+        }
+    }
+
+    MouseArea {
+        id: barMouseArea
+        anchors.fill: parent
+        // This MouseArea is on top (declared after the button) and handles left clicks to toggle the popup.
+        // Right and middle clicks are not accepted, so they fall through to the button underneath.
+        onClicked: {
+            if (mouse.button === Qt.LeftButton) {
+                accepted = true;
+                if (panelLoader.item && panelLoader.item.opened) {
+                    panelLoader.item.close();
+                } else {
+                    panelLoader.item.toggle();
+                }
+            }
+            // For right and middle buttons, we do not set accepted, so the event propagates to the button underneath.
         }
     }
 }
