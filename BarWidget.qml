@@ -14,6 +14,11 @@ BarWidget {
     id: root
     moduleName: "lun.patro"
 
+    Translations {
+        id: strings
+        directory: Qt.resolvedUrl("i18n")
+    }
+
     property date displayDate: clock.date
 
     readonly property string configuredFormat: vertical ? setting("verticalFormat", "HH\n—\nmm") : setting("format", "dddd HH:mm")
@@ -184,7 +189,7 @@ BarWidget {
         fixedHeight: root.vertical ? root.verticalLines.length * Style.bar.iconSlot : -1
         horizontalMargin: 8.75
         verticalPadding: 8.75
-        tooltipText: "Right-click to toggle format"
+        tooltipText: strings.t("tooltip.toggleFormat")
 
         onPressed: function (b) {
             if (b === Qt.RightButton)
@@ -213,24 +218,6 @@ BarWidget {
                     color: button.foreground
                 }
             }
-        }
-    }
-
-    MouseArea {
-        id: barMouseArea
-        anchors.fill: parent
-        // This MouseArea is on top (declared after the button) and handles left clicks to toggle the popup.
-        // Right and middle clicks are not accepted, so they fall through to the button underneath.
-        onClicked: {
-            if (mouse.button === Qt.LeftButton) {
-                accepted = true;
-                if (panelLoader.item && panelLoader.item.opened) {
-                    panelLoader.item.close();
-                } else {
-                    panelLoader.item.toggle();
-                }
-            }
-            // For right and middle buttons, we do not set accepted, so the event propagates to the button underneath.
         }
     }
 }

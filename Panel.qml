@@ -1,6 +1,7 @@
 import QtQuick
 import Quickshell
 import qs.Commons
+import qs.Commons as Commons
 import qs.Ui
 import "Model.js" as Model
 
@@ -10,6 +11,11 @@ Panel {
     moduleName: "lun.patro"
     ipcTarget: "lun.patro"
     manageIpc: false
+
+    Commons.Translations {
+        id: strings
+        directory: Qt.resolvedUrl("i18n")
+    }
 
     property var anchorItem: null
     property var hostWidget: null
@@ -240,6 +246,7 @@ Panel {
 
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
+                                textFormat: Text.PlainText
                                 text: root.todayText()
                                 color: root.contentForeground
                                 font.family: root.contentFontFamily
@@ -249,7 +256,8 @@ Panel {
 
                             Text {
                                 anchors.horizontalCenter: parent.horizontalCenter
-                                text: root.bsMode ? "विक्रम संवत" : "GREGORIAN"
+                                textFormat: Text.PlainText
+                                text: root.bsMode ? strings.t("mode.headerBs") : strings.t("mode.headerAd")
                                 color: Qt.darker(root.contentForeground, 1.55)
                                 font.family: root.contentFontFamily
                                 font.pixelSize: Style.font.caption
@@ -296,7 +304,8 @@ Panel {
 
                                     Text {
                                         anchors.centerIn: parent
-                                        text: parent.modelData
+                                        textFormat: Text.PlainText
+                                        text: strings.t("mode." + parent.modelData.toLowerCase())
                                         color: (parent.modelData === "BS") === root.bsMode ? Style.contrastingTextColor(Style.selectedStateColor(root.contentForeground, Color.accent)) : Qt.darker(root.contentForeground, 1.6)
                                         font.family: root.contentFontFamily
                                         font.pixelSize: Style.font.caption
@@ -371,6 +380,7 @@ Panel {
                                         height: Style.space(16)
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
+                                        textFormat: Text.PlainText
                                         text: root.weekdayLabel(modelData)
                                         color: Qt.darker(root.contentForeground, 1.5)
                                         font.family: root.contentFontFamily
@@ -393,6 +403,7 @@ Panel {
                                         height: root.cellHeight
                                         horizontalAlignment: Text.AlignHCenter
                                         verticalAlignment: Text.AlignVCenter
+                                        textFormat: Text.PlainText
                                         text: root.dayText(modelData.week)
                                         color: Qt.darker(root.contentForeground, 1.9)
                                         font.family: root.contentFontFamily
@@ -418,6 +429,7 @@ Panel {
 
                                             Text {
                                                 anchors.centerIn: parent
+                                                textFormat: Text.PlainText
                                                 text: root.dayText(modelData.day)
                                                 color: modelData.inMonth ? (modelData.weekend ? Qt.darker(root.contentForeground, 1.45) : root.contentForeground) : Qt.darker(root.contentForeground, 2.2)
                                                 font.family: root.contentFontFamily
@@ -446,6 +458,7 @@ Panel {
                                 anchors.centerIn: parent
                                 width: Style.space(190)
                                 horizontalAlignment: Text.AlignHCenter
+                                textFormat: Text.PlainText
                                 text: root.monthText()
                                 color: Qt.darker(root.contentForeground, 1.4)
                                 font.family: root.contentFontFamily
@@ -458,7 +471,7 @@ Panel {
                                 anchors.leftMargin: -Style.space(8)
                                 anchors.verticalCenter: parent.verticalCenter
                                 iconText: "󰅁"
-                                tooltipText: "Previous month"
+                                tooltipText: strings.t("tooltip.previousMonth")
                                 foreground: root.contentForeground
                                 fontFamily: root.contentFontFamily
                                 onClicked: root.moveMonth(-1)
@@ -469,7 +482,7 @@ Panel {
                                 anchors.rightMargin: -Style.space(8)
                                 anchors.verticalCenter: parent.verticalCenter
                                 iconText: "󰅂"
-                                tooltipText: "Next month"
+                                tooltipText: strings.t("tooltip.nextMonth")
                                 foreground: root.contentForeground
                                 fontFamily: root.contentFontFamily
                                 onClicked: root.moveMonth(1)

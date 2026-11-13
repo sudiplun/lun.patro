@@ -1,0 +1,9 @@
+{
+  "tooltip.toggleFormat": "Right-click to toggle format",
+  "tooltip.previousMonth": "Previous month",
+  "tooltip.nextMonth": "Next month",
+  "mode.bs": "BS",
+  "mode.ad": "AD",
+  "mode.headerBs": "विक्रम संवत",
+  "mode.headerAd": "GREGORIAN"
+}
